@@ -95,6 +95,15 @@ export class ChampSelectController {
     const localPlayer = getLocalPlayer(session);
     const currentIntent = localPlayer?.championPickIntent ?? 0;
     const forcePick = this.configStore.get("force-pick");
+
+    if (currentIntent && currentIntent === this.declaredPickIntent) {
+      return;
+    }
+
+    if (this.isDeclaredPickIntentStillValid(snapshot, forcePick)) {
+      return;
+    }
+
     const championId = selectChampionId(this.configStore.get("pick-champions"), (candidateId) => {
       if (snapshot.bannedChampionIds.includes(candidateId)) {
         return false;
@@ -123,6 +132,24 @@ export class ChampSelectController {
     if (response.ok) {
       this.declaredPickIntent = championId;
     }
+  }
+
+  isDeclaredPickIntentStillValid(snapshot, forcePick) {
+    if (!this.declaredPickIntent) {
+      return false;
+    }
+
+    if (snapshot.bannedChampionIds.includes(this.declaredPickIntent)) {
+      this.declaredPickIntent = null;
+      return false;
+    }
+
+    if (!forcePick && isChampionPicked(this.declaredPickIntent, snapshot.pickedChampions)) {
+      this.declaredPickIntent = null;
+      return false;
+    }
+
+    return true;
   }
 
   async handleAction(action, snapshot) {

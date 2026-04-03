@@ -15,7 +15,7 @@ plugins/
 The `index.js` file is a pinned CDN bootstrap:
 
 ```js
-export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect@3.1.1/dist/index.js";
+export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect@3.1.2/dist/index.js";
 ```
 
 Then reload the League client.
@@ -25,7 +25,7 @@ Then reload the League client.
 If you do not want the full repo, create `plugins/autochampselect/index.js` yourself and paste:
 
 ```js
-export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect@3.1.1/dist/index.js";
+export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect@3.1.2/dist/index.js";
 ```
 
 ## Update

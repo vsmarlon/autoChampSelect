@@ -651,13 +651,58 @@ export class UiController {
     });
   }
 
+  isElementVisible(element) {
+    if (!(element instanceof Element)) {
+      return false;
+    }
+
+    const style = window.getComputedStyle(element);
+    if (style.display === "none" || style.visibility === "hidden" || style.pointerEvents === "none") {
+      return false;
+    }
+
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  }
+
+  isChampSelectButtonOccluded(buttonContainer) {
+    const rect = buttonContainer.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      return false;
+    }
+
+    const samplePoints = [
+      [rect.left + rect.width / 2, rect.top + rect.height / 2],
+      [rect.left + rect.width * 0.25, rect.top + rect.height / 2],
+      [rect.left + rect.width * 0.75, rect.top + rect.height / 2],
+    ];
+
+    return samplePoints.some(([x, y]) => {
+      const elements = document.elementsFromPoint(x, y);
+      const blockingElement = elements.find((element) => {
+        if (!(element instanceof Element) || buttonContainer.contains(element)) {
+          return false;
+        }
+
+        if (element === document.documentElement || element === document.body) {
+          return false;
+        }
+
+        return this.isElementVisible(element);
+      });
+
+      return Boolean(blockingElement);
+    });
+  }
+
   applyChampSelectButtonVisibility() {
     const buttonContainer = document.querySelector(".select-champ-select-container");
     if (!buttonContainer) {
       return;
     }
 
-    const shouldHide = this.currentPhase === "ChampSelect" && this.hasNativeChampSelectModalOpen();
+    const shouldHide = this.currentPhase === "ChampSelect"
+      && (this.hasNativeChampSelectModalOpen() || this.isChampSelectButtonOccluded(buttonContainer));
     buttonContainer.classList.toggle("select-champ-select-container--hidden", shouldHide);
     this.lastChampSelectButtonHidden = shouldHide;
   }
