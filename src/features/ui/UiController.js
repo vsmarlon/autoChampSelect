@@ -679,8 +679,16 @@ export class UiController {
 
     return samplePoints.some(([x, y]) => {
       const elements = document.elementsFromPoint(x, y);
-      const blockingElement = elements.find((element) => {
-        if (!(element instanceof Element) || buttonContainer.contains(element)) {
+      const buttonElementIndex = elements.findIndex((element) => {
+        return element instanceof Element && buttonContainer.contains(element);
+      });
+
+      if (buttonElementIndex === -1) {
+        return false;
+      }
+
+      return elements.slice(0, buttonElementIndex).some((element) => {
+        if (!(element instanceof Element)) {
           return false;
         }
 
@@ -690,8 +698,6 @@ export class UiController {
 
         return this.isElementVisible(element);
       });
-
-      return Boolean(blockingElement);
     });
   }
 

@@ -4,7 +4,7 @@ Auto accept, pick, and ban plugin for Pengu Loader.
 
 ## Install
 
-Copy this repo's plugin folder into your Pengu `plugins` directory so you end up with:
+Create this file in your Pengu `plugins` directory:
 
 ```text
 plugins/
@@ -12,25 +12,17 @@ plugins/
     index.js
 ```
 
-The `index.js` file is a pinned CDN bootstrap:
+Paste this into `index.js`:
 
 ```js
-export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect@3.1.2/dist/index.js";
+export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect/dist/index.js";
 ```
 
 Then reload the League client.
 
-## Manual Setup
-
-If you do not want the full repo, create `plugins/autochampselect/index.js` yourself and paste:
-
-```js
-export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect@3.1.2/dist/index.js";
-```
-
 ## Update
 
-When a new version is released, update the pinned version in `index.js`.
+The jsDelivr URL follows the latest published package automatically.
 
 ## Development
 
