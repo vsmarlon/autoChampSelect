@@ -667,6 +667,13 @@ export class UiController {
       this.generateChampSelectButton(element);
     });
 
+    if (document.body) {
+      new MutationObserver(() => this.ensureChampSelectButton()).observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
     this.ensureChampSelectButton();
   }
 
