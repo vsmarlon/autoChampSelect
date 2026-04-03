@@ -38,7 +38,7 @@ export class ConfigStore {
   }
 
   toggle(key) {
-    const nextValue = !Boolean(this.get(key));
+    const nextValue = !this.get(key);
     this.set(key, nextValue);
     return nextValue;
   }

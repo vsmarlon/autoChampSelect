@@ -144,7 +144,7 @@ class Dropdown {
   }
 
   async ensureShadowReady() {
-    for (let attempt = 0; attempt < 30; attempt += 1) {
+    for (let attempt = 0; attempt < SHADOW_READY_MAX_ATTEMPTS; attempt += 1) {
       await new Promise((resolve) => requestAnimationFrame(resolve));
       const root = this.element.shadowRoot;
       if (root?.querySelector(".ui-dropdown-current")) {
@@ -387,12 +387,52 @@ class HomePanel {
     const autoAcceptCheckbox = new Checkbox(this.configStore, "Accept", "auto-accept", this.logger);
     const pickCheckbox = new Checkbox(this.configStore, "Pick", "auto-pick", this.logger);
     const banCheckbox = new Checkbox(this.configStore, "Ban", "auto-ban", this.logger);
-    const firstPickDropdown = new Dropdown(this.configStore, "1st pick", "pick", 0, () => this.championRepository.getPlayableChampions(), this.logger, { dropUp: true });
-    const secondPickDropdown = new Dropdown(this.configStore, "2nd pick", "pick", 1, () => this.championRepository.getPlayableChampions(), this.logger, { dropUp: true });
-    const firstBanDropdown = new Dropdown(this.configStore, "1st ban", "ban", 0, () => this.championRepository.getAllChampions(), this.logger, { dropUp: true });
-    const secondBanDropdown = new Dropdown(this.configStore, "2nd ban", "ban", 1, () => this.championRepository.getAllChampions(), this.logger, { dropUp: true });
+    const firstPickDropdown = new Dropdown(
+      this.configStore,
+      "1st pick",
+      "pick",
+      0,
+      () => this.championRepository.getPlayableChampions(),
+      this.logger,
+      { dropUp: true },
+    );
+    const secondPickDropdown = new Dropdown(
+      this.configStore,
+      "2nd pick",
+      "pick",
+      1,
+      () => this.championRepository.getPlayableChampions(),
+      this.logger,
+      { dropUp: true },
+    );
+    const firstBanDropdown = new Dropdown(
+      this.configStore,
+      "1st ban",
+      "ban",
+      0,
+      () => this.championRepository.getAllChampions(),
+      this.logger,
+      { dropUp: true },
+    );
+    const secondBanDropdown = new Dropdown(
+      this.configStore,
+      "2nd ban",
+      "ban",
+      1,
+      () => this.championRepository.getAllChampions(),
+      this.logger,
+      { dropUp: true },
+    );
 
-    this.controls = [autoAcceptCheckbox, pickCheckbox, banCheckbox, firstPickDropdown, secondPickDropdown, firstBanDropdown, secondBanDropdown];
+    this.controls = [
+      autoAcceptCheckbox,
+      pickCheckbox,
+      banCheckbox,
+      firstPickDropdown,
+      secondPickDropdown,
+      firstBanDropdown,
+      secondBanDropdown,
+    ];
 
     this.checkboxesDiv = document.createElement("div");
     this.checkboxesDiv.classList.add("select-home-checkboxes");
@@ -400,7 +440,12 @@ class HomePanel {
 
     this.dropdownsDiv = document.createElement("div");
     this.dropdownsDiv.classList.add("select-home-dropdowns");
-    this.dropdownsDiv.append(firstPickDropdown.element, secondPickDropdown.element, firstBanDropdown.element, secondBanDropdown.element);
+    this.dropdownsDiv.append(
+      firstPickDropdown.element,
+      secondPickDropdown.element,
+      firstBanDropdown.element,
+      secondBanDropdown.element,
+    );
 
     const socialSection = new SocialSection("Auto Champion Select", this.checkboxesDiv, this.dropdownsDiv);
     this.section = socialSection.element;
@@ -440,12 +485,48 @@ class SettingsModal {
     const autoAcceptCheckbox = new Checkbox(this.configStore, "Accept", "auto-accept", this.logger);
     const pickCheckbox = new Checkbox(this.configStore, "Pick", "auto-pick", this.logger);
     const banCheckbox = new Checkbox(this.configStore, "Ban", "auto-ban", this.logger);
-    const firstPickDropdown = new Dropdown(this.configStore, "1st pick", "pick", 0, () => this.championRepository.getPlayableChampions(), this.logger);
-    const secondPickDropdown = new Dropdown(this.configStore, "2nd pick", "pick", 1, () => this.championRepository.getPlayableChampions(), this.logger);
-    const firstBanDropdown = new Dropdown(this.configStore, "1st ban", "ban", 0, () => this.championRepository.getAllChampions(), this.logger);
-    const secondBanDropdown = new Dropdown(this.configStore, "2nd ban", "ban", 1, () => this.championRepository.getAllChampions(), this.logger);
+    const firstPickDropdown = new Dropdown(
+      this.configStore,
+      "1st pick",
+      "pick",
+      0,
+      () => this.championRepository.getPlayableChampions(),
+      this.logger,
+    );
+    const secondPickDropdown = new Dropdown(
+      this.configStore,
+      "2nd pick",
+      "pick",
+      1,
+      () => this.championRepository.getPlayableChampions(),
+      this.logger,
+    );
+    const firstBanDropdown = new Dropdown(
+      this.configStore,
+      "1st ban",
+      "ban",
+      0,
+      () => this.championRepository.getAllChampions(),
+      this.logger,
+    );
+    const secondBanDropdown = new Dropdown(
+      this.configStore,
+      "2nd ban",
+      "ban",
+      1,
+      () => this.championRepository.getAllChampions(),
+      this.logger,
+    );
 
-    this.controls = [autoAcceptCheckbox, pickCheckbox, banCheckbox, firstPickDropdown, secondPickDropdown, firstBanDropdown, secondBanDropdown];
+    this.controls = [
+      autoAcceptCheckbox,
+      pickCheckbox,
+      banCheckbox,
+      firstPickDropdown,
+      secondPickDropdown,
+      firstBanDropdown,
+      secondBanDropdown,
+    ];
 
     const toggleRow = document.createElement("div");
     toggleRow.classList.add("select-settings-panel__toggles");
@@ -517,7 +598,9 @@ class SettingsModal {
   async open() {
     this.build();
     document.body.appendChild(this.element);
-    await Promise.all(this.controls.map((control, index) => (index < 3 ? Promise.resolve(control.setup()) : control.setup())));
+    await Promise.all(
+      this.controls.map((control, index) => (index < 3 ? Promise.resolve(control.setup()) : control.setup())),
+    );
   }
 
   destroy() {
@@ -528,12 +611,7 @@ class SettingsModal {
   }
 }
 
-const NATIVE_MODAL_SELECTORS = [
-  ".modal .dialog-alert .page_editor.perks-panel",
-  ".modal .dialog-alert .runes-application",
-  ".modal .dialog-alert .perks-body",
-  ".modal .dialog-alert .loadouts-page",
-];
+const SHADOW_READY_MAX_ATTEMPTS = 30;
 
 export class UiController {
   constructor(configStore, championRepository, logger) {
@@ -543,10 +621,6 @@ export class UiController {
     this.currentPhase = null;
     this.homePanel = null;
     this.homePanelObserverAttached = false;
-    this.modalVisibilityWatchersAttached = false;
-    this.modalVisibilityObserver = null;
-    this.visibilityUpdateScheduled = false;
-    this.lastChampSelectButtonHidden = null;
     this.modal = null;
     this.handleEscapeClose = this.handleEscapeClose.bind(this);
   }
@@ -556,7 +630,6 @@ export class UiController {
 
     if (phase === "ChampSelect") {
       this.ensureChampSelectButton();
-      this.updateChampSelectButtonVisibility();
     }
   }
 
@@ -582,7 +655,6 @@ export class UiController {
   }
 
   initChampSelectUI() {
-    this.attachModalVisibilityWatchers();
     this.subscribeToElementCreation(".bottom-right-buttons", (element) => {
       if (this.currentPhase !== "ChampSelect") {
         return;
@@ -638,121 +710,6 @@ export class UiController {
     this.generateChampSelectButton(bottomRightButtons);
   }
 
-  hasNativeChampSelectModalOpen() {
-    return NATIVE_MODAL_SELECTORS.some((selector) => {
-      const element = document.querySelector(selector);
-      if (!element || element === this.modal?.element) {
-        return false;
-      }
-
-      const modalRoot = element.closest(".modal") ?? element;
-      const style = window.getComputedStyle(modalRoot);
-      return style.display !== "none" && style.visibility !== "hidden";
-    });
-  }
-
-  isElementVisible(element) {
-    if (!(element instanceof Element)) {
-      return false;
-    }
-
-    const style = window.getComputedStyle(element);
-    if (style.display === "none" || style.visibility === "hidden" || style.pointerEvents === "none") {
-      return false;
-    }
-
-    const rect = element.getBoundingClientRect();
-    return rect.width > 0 && rect.height > 0;
-  }
-
-  isChampSelectButtonOccluded(buttonContainer) {
-    const rect = buttonContainer.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
-      return false;
-    }
-
-    const samplePoints = [
-      [rect.left + rect.width / 2, rect.top + rect.height / 2],
-      [rect.left + rect.width * 0.25, rect.top + rect.height / 2],
-      [rect.left + rect.width * 0.75, rect.top + rect.height / 2],
-    ];
-
-    return samplePoints.some(([x, y]) => {
-      const elements = document.elementsFromPoint(x, y);
-      const buttonElementIndex = elements.findIndex((element) => {
-        return element instanceof Element && buttonContainer.contains(element);
-      });
-
-      if (buttonElementIndex === -1) {
-        return false;
-      }
-
-      return elements.slice(0, buttonElementIndex).some((element) => {
-        if (!(element instanceof Element)) {
-          return false;
-        }
-
-        if (element === document.documentElement || element === document.body) {
-          return false;
-        }
-
-        return this.isElementVisible(element);
-      });
-    });
-  }
-
-  applyChampSelectButtonVisibility() {
-    const buttonContainer = document.querySelector(".select-champ-select-container");
-    if (!buttonContainer) {
-      return;
-    }
-
-    const shouldHide = this.currentPhase === "ChampSelect"
-      && (this.hasNativeChampSelectModalOpen() || this.isChampSelectButtonOccluded(buttonContainer));
-    buttonContainer.classList.toggle("select-champ-select-container--hidden", shouldHide);
-    this.lastChampSelectButtonHidden = shouldHide;
-  }
-
-  updateChampSelectButtonVisibility() {
-    if (this.visibilityUpdateScheduled) {
-      return;
-    }
-
-    this.visibilityUpdateScheduled = true;
-    requestAnimationFrame(() => {
-      this.visibilityUpdateScheduled = false;
-      this.applyChampSelectButtonVisibility();
-    });
-  }
-
-  attachModalVisibilityWatchers() {
-    if (this.modalVisibilityWatchersAttached) {
-      return;
-    }
-
-    this.modalVisibilityWatchersAttached = true;
-
-    if (document.body) {
-      this.modalVisibilityObserver = new MutationObserver(() => {
-        this.ensureChampSelectButton();
-        this.updateChampSelectButtonVisibility();
-      });
-      this.modalVisibilityObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["style", "class", "open"],
-      });
-    }
-
-    NATIVE_MODAL_SELECTORS.forEach((selector) => {
-      this.subscribeToElementCreation(selector, () => {
-        this.ensureChampSelectButton();
-        this.updateChampSelectButtonVisibility();
-      });
-    });
-  }
-
   handleEscapeClose(event) {
     if (event.key === "Escape") {
       this.closeModal();
@@ -767,14 +724,12 @@ export class UiController {
     this.modal = new SettingsModal(this.configStore, this.championRepository, () => this.closeModal(), this.logger);
     document.addEventListener("keydown", this.handleEscapeClose);
     await this.modal.open();
-    this.updateChampSelectButtonVisibility();
   }
 
   closeModal() {
     this.modal?.destroy();
     this.modal = null;
     document.removeEventListener("keydown", this.handleEscapeClose);
-    this.updateChampSelectButtonVisibility();
   }
 
   generateChampSelectButton(siblingDiv) {
@@ -791,6 +746,5 @@ export class UiController {
     wrapper.appendChild(button);
     container.appendChild(wrapper);
     siblingDiv?.parentNode?.insertBefore(container, siblingDiv);
-    this.updateChampSelectButtonVisibility();
   }
 }

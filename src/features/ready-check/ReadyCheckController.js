@@ -1,5 +1,7 @@
 import { sleep } from "../../utils/sleep.js";
 
+const ACCEPT_DELAY_MS = 2000;
+
 export class ReadyCheckController {
   constructor(configStore, lcuClient, logger) {
     this.configStore = configStore;
@@ -12,7 +14,7 @@ export class ReadyCheckController {
       return;
     }
 
-    await sleep(2000);
+    await sleep(ACCEPT_DELAY_MS);
 
     if (!this.configStore.get("auto-accept")) {
       return;

@@ -6,7 +6,7 @@ import { ReadyCheckController } from "../features/ready-check/ReadyCheckControll
 import { ChampSelectController } from "../features/champ-select/ChampSelectController.js";
 import { UiController } from "../features/ui/UiController.js";
 
-const VERSION = "3.1.2";
+const VERSION = "3.2.0";
 
 export class AutoChampSelectApp {
   constructor() {
@@ -15,7 +15,11 @@ export class AutoChampSelectApp {
     this.lcuClient = new LcuClient(this.logger.child("lcu"));
     this.championRepository = new ChampionRepository(this.lcuClient, this.logger.child("champions"));
     this.uiController = new UiController(this.configStore, this.championRepository, this.logger.child("ui"));
-    this.readyCheckController = new ReadyCheckController(this.configStore, this.lcuClient, this.logger.child("ready-check"));
+    this.readyCheckController = new ReadyCheckController(
+      this.configStore,
+      this.lcuClient,
+      this.logger.child("ready-check"),
+    );
     this.champSelectController = new ChampSelectController(
       this.configStore,
       this.lcuClient,
@@ -42,14 +46,7 @@ export class AutoChampSelectApp {
         return;
       }
 
-      if (![
-        "auto-pick",
-        "auto-ban",
-        "pick-champions",
-        "ban-champions",
-        "force-pick",
-        "force-ban",
-      ].includes(key)) {
+      if (!["auto-pick", "auto-ban", "pick-champions", "ban-champions", "force-pick", "force-ban"].includes(key)) {
         return;
       }
 

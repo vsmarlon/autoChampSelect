@@ -7,9 +7,11 @@ export function getLocalPlayer(session) {
 }
 
 export function getPendingPickAction(session) {
-  return flattenActions(session).find((action) => {
-    return action.actorCellId === session.localPlayerCellId && action.type === "pick" && !action.completed;
-  }) ?? null;
+  return (
+    flattenActions(session).find((action) => {
+      return action.actorCellId === session.localPlayerCellId && action.type === "pick" && !action.completed;
+    }) ?? null
+  );
 }
 
 export function getActionsToProcess(session) {

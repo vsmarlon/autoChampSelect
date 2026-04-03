@@ -70,13 +70,7 @@
   bottom: 57px;
   display: flex;
   align-items: flex-end;
-  z-index: 100;
   pointer-events: none;
-}
-
-.select-champ-select-container--hidden {
-  opacity: 0;
-  visibility: hidden;
 }
 
 .select-button-wrapper {
