@@ -1,0 +1,26 @@
+{
+  "name": "autochampselect",
+  "version": "3.1.1",
+  "description": "Auto accept, pick, and ban plugin runtime for Pengu Loader",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "browser": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  }
+}
