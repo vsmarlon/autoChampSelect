@@ -68,8 +68,8 @@ class Dropdown {
     }
 
     this.champions = await this.championsGetter();
-    if (!Array.isArray(this.champions) || this.champions.length === 0) {
-      return;
+    if (!Array.isArray(this.champions)) {
+      this.champions = [];
     }
 
     this.configStore.ensureChampionDefaults(this.configType, this.champions);

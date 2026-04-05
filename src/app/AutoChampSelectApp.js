@@ -6,7 +6,7 @@ import { ReadyCheckController } from "../features/ready-check/ReadyCheckControll
 import { ChampSelectController } from "../features/champ-select/ChampSelectController.js";
 import { UiController } from "../features/ui/UiController.js";
 
-const VERSION = "3.2.2";
+const VERSION = "3.2.3";
 
 export class AutoChampSelectApp {
   constructor() {
