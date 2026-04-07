@@ -1,1 +1,1 @@
-export { init, load } from "./dist/index.js";
+export { init, load } from "https://cdn.jsdelivr.net/npm/autochampselect@3.2.4/dist/index.js";
