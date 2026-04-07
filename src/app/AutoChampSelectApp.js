@@ -5,8 +5,7 @@ import { ChampionRepository } from "../core/ChampionRepository.js";
 import { ReadyCheckController } from "../features/ready-check/ReadyCheckController.js";
 import { ChampSelectController } from "../features/champ-select/ChampSelectController.js";
 import { UiController } from "../features/ui/UiController.js";
-
-const VERSION = "3.2.3";
+import { VERSION } from "../constants.js";
 
 export class AutoChampSelectApp {
   constructor() {
@@ -46,7 +45,20 @@ export class AutoChampSelectApp {
         return;
       }
 
-      if (!["auto-pick", "auto-ban", "pick-champions", "ban-champions", "force-pick", "force-ban"].includes(key)) {
+      if (
+        ![
+          "auto-pick",
+          "auto-ban",
+          "pick-champions",
+          "ban-champions",
+          "force-pick",
+          "force-ban",
+          "lane-based-pick",
+          "lane-based-ban",
+          "lane-pick-champions",
+          "lane-ban-champions",
+        ].includes(key)
+      ) {
         return;
       }
 
@@ -87,6 +99,12 @@ export class AutoChampSelectApp {
 
     if (phase === "ReadyCheck") {
       this.readyCheckController.handleReadyCheck();
+      return;
+    }
+
+    if (phase === "Lobby") {
+      await this.championRepository.getPlayableChampions(true);
+      await this.uiController.refreshHomeDropdowns();
       return;
     }
 

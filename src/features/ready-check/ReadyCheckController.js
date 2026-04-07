@@ -10,10 +10,6 @@ export class ReadyCheckController {
       return;
     }
 
-    if (!this.configStore.get("auto-accept")) {
-      return;
-    }
-
     try {
       const response = await this.lcuClient.acceptReadyCheck();
       if (!response.ok) {

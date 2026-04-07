@@ -1,20 +1,17 @@
+import { CONFIG_CHANGE_EVENT, CONFIG_DEFAULTS, LANES } from "../constants.js";
+
 const STORE_KEY = "SelectAutoSelect";
 const LEGACY_STORE_KEYS = ["SelectAutoSelect"];
 const LEGACY_PREFIXES = ["select"];
-const CONFIG_CHANGE_EVENT = "select-config-change";
-
-const DEFAULTS = {
-  "auto-accept": false,
-  "auto-pick": false,
-  "auto-ban": false,
-  "pick-champions": [0, 0],
-  "ban-champions": [0, 0],
-  "force-pick": false,
-  "force-ban": false,
-};
 
 function cloneValue(value) {
-  return Array.isArray(value) ? [...value] : value;
+  if (Array.isArray(value)) {
+    return [...value];
+  }
+  if (value && typeof value === "object") {
+    return JSON.parse(JSON.stringify(value));
+  }
+  return value;
 }
 
 export class ConfigStore {
@@ -27,7 +24,7 @@ export class ConfigStore {
   }
 
   get(key) {
-    return this.readValue(key, cloneValue(DEFAULTS[key]));
+    return this.readValue(key, cloneValue(CONFIG_DEFAULTS[key]));
   }
 
   set(key, value) {
@@ -55,34 +52,33 @@ export class ConfigStore {
     this.set(key, championIds);
   }
 
-  ensureChampionDefaults(type, champions) {
-    const key = `${type}-champions`;
-    const current = [...this.get(key)];
-    let changed = false;
-
-    for (let index = 0; index < current.length; index += 1) {
-      const championId = current[index];
-      const hasSavedChampion = champions.some((champion) => champion.id === championId);
-
-      if (hasSavedChampion) {
-        continue;
-      }
-
-      const fallbackChampion = champions[index] ?? champions[0];
-      if (!fallbackChampion) {
-        continue;
-      }
-
-      current[index] = fallbackChampion.id;
-      changed = true;
-    }
-
-    if (changed) {
-      this.set(key, current);
-    }
-
-    return current;
+  getLaneChampion(type, lane, index) {
+    const laneChampions = this.get(`lane-${type}-champions`);
+    return laneChampions[lane]?.[index] ?? 0;
   }
+
+  setLaneChampion(type, lane, index, championId) {
+    const key = `lane-${type}-champions`;
+    const laneChampions = this.get(key);
+    if (!laneChampions[lane]) {
+      laneChampions[lane] = [0, 0];
+    }
+    laneChampions[lane][index] = championId;
+    this.set(key, laneChampions);
+  }
+
+  getEffectiveChampions(type, lane) {
+    const laneActive = this.get("lane-based-pick") || this.get("lane-based-ban");
+    if (laneActive && lane && LANES.includes(lane)) {
+      const laneChampions = this.get(`lane-${type}-champions`);
+      const laneList = laneChampions[lane];
+      if (laneList && laneList.some((id) => id !== 0)) {
+        return laneList;
+      }
+    }
+    return this.get(`${type}-champions`);
+  }
+
 
   onChange(callback) {
     const listener = (event) => callback(event.detail ?? {});
@@ -93,7 +89,7 @@ export class ConfigStore {
   readValue(key, fallback = null) {
     const store = this.migrateStore();
     if (Object.prototype.hasOwnProperty.call(store, key)) {
-      return store[key];
+      return cloneValue(store[key]);
     }
 
     return fallback;
@@ -119,7 +115,7 @@ export class ConfigStore {
     const nextStore = { ...store };
     let changed = false;
 
-    for (const [key, defaultValue] of Object.entries(DEFAULTS)) {
+    for (const [key, defaultValue] of Object.entries(CONFIG_DEFAULTS)) {
       if (Object.prototype.hasOwnProperty.call(nextStore, key)) {
         continue;
       }

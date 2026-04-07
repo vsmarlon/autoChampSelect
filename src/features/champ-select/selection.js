@@ -15,18 +15,16 @@ export function getPendingPickAction(session) {
 }
 
 export function getActionsToProcess(session) {
-  const myActions = flattenActions(session).filter((action) => {
-    return action.actorCellId === session.localPlayerCellId && !action.completed;
+  return flattenActions(session).filter((action) => {
+    return action.actorCellId === session.localPlayerCellId && !action.completed && action.isInProgress;
   });
-  const activeActions = myActions.filter((action) => action.isInProgress);
-  return activeActions.length > 0 ? activeActions : myActions;
 }
 
 export function getSessionSnapshot(session) {
   return {
-    bannedChampionIds: [...session.bans.myTeamBans, ...session.bans.theirTeamBans],
+    bannedChampionIds: [...session.bans.myTeamBans, ...session.bans.theirTeamBans].filter(Boolean),
     pickedChampions: [...session.myTeam, ...session.theirTeam],
-    teammateIntentChampionIds: session.myTeam.map((player) => player.championPickIntent),
+    teammateIntentChampionIds: session.myTeam.map((player) => player.championPickIntent).filter(Boolean),
   };
 }
 

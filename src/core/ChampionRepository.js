@@ -12,6 +12,18 @@ export class ChampionRepository {
     this.allRequest = null;
   }
 
+  static isPlayableChampion(champion) {
+    if (!champion || champion.id <= 0) {
+      return false;
+    }
+
+    if (champion.alias && champion.alias.startsWith("Ruby_")) {
+      return false;
+    }
+
+    return true;
+  }
+
   async getPlayableChampions(forceRefresh = false) {
     if (forceRefresh) {
       this.playableCache = null;
@@ -53,18 +65,23 @@ export class ChampionRepository {
   }
 
   async loadOwnedChampions() {
-    try {
-      const champions = await this.lcuClient.getOwnedChampions();
-      if (!Array.isArray(champions)) {
-        return this.playableCache ?? [];
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        const champions = await this.lcuClient.getOwnedChampions();
+        if (Array.isArray(champions) && champions.length > 0) {
+          this.playableCache = sortByName(champions.filter(ChampionRepository.isPlayableChampion));
+          return this.playableCache;
+        }
+      } catch (error) {
+        this.logger.log("owned champions request failed, attempt", attempt, error);
       }
 
-      this.playableCache = sortByName(champions);
-      return this.playableCache;
-    } catch (error) {
-      this.logger.log("owned champions request failed", error);
-      return this.playableCache ?? [];
+      if (attempt < 2) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
     }
+
+    return this.playableCache ?? [];
   }
 
   async loadAllChampions() {
@@ -74,8 +91,11 @@ export class ChampionRepository {
         return this.allCache ?? [];
       }
 
-      this.allCache = sortByName(champions);
-      return this.allCache;
+      const playable = champions.filter(ChampionRepository.isPlayableChampion);
+      if (playable.length > 0) {
+        this.allCache = sortByName(playable);
+      }
+      return this.allCache ?? [];
     } catch (error) {
       this.logger.log("all champions request failed", error);
       return this.allCache ?? [];

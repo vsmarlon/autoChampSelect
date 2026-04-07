@@ -78,12 +78,13 @@ export class ChampSelectController {
     }
 
     for (const action of getActionsToProcess(session)) {
-      if (!action.isInProgress) {
-        continue;
-      }
-
-      await this.handleAction(action, snapshot);
+      await this.handleAction(action, session, snapshot);
     }
+  }
+
+  getChampionList(type, session) {
+    const lane = getLocalPlayer(session)?.assignedPosition || "";
+    return this.configStore.getEffectiveChampions(type, lane);
   }
 
   async declarePickIntent(session, snapshot) {
@@ -104,7 +105,7 @@ export class ChampSelectController {
       return;
     }
 
-    const championId = selectChampionId(this.configStore.get("pick-champions"), (candidateId) => {
+    const championId = selectChampionId(this.getChampionList("pick", session), (candidateId) => {
       if (snapshot.bannedChampionIds.includes(candidateId)) {
         return false;
       }
@@ -126,11 +127,13 @@ export class ChampSelectController {
 
     const response = await this.lcuClient.updateSessionAction(pickAction.id, {
       championId,
-      completed: false,
     });
 
     if (response.ok) {
       this.declaredPickIntent = championId;
+    } else {
+      this.logger.log("failed to declare pick intent", response.status, championId);
+      setTimeout(() => this.reprocessLatestSession(), 1000);
     }
   }
 
@@ -152,7 +155,7 @@ export class ChampSelectController {
     return true;
   }
 
-  async handleAction(action, snapshot) {
+  async handleAction(action, session, snapshot) {
     const isPickAction = action.type === "pick";
     const configPrefix = isPickAction ? "pick" : "ban";
     const enabled = this.configStore.get(`auto-${configPrefix}`);
@@ -161,7 +164,7 @@ export class ChampSelectController {
     }
 
     const force = this.configStore.get(`force-${configPrefix}`);
-    const championId = selectChampionId(this.configStore.get(`${configPrefix}-champions`), (candidateId) => {
+    const championId = selectChampionId(this.getChampionList(configPrefix, session), (candidateId) => {
       if (snapshot.bannedChampionIds.includes(candidateId)) {
         return false;
       }
@@ -184,6 +187,7 @@ export class ChampSelectController {
 
     if (!response.ok) {
       this.logger.log(`failed to lock ${action.type}`, response.status, championId);
+      setTimeout(() => this.reprocessLatestSession(), 1000);
     }
   }
 }
