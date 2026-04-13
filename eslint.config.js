@@ -1,7 +1,9 @@
 import js from "@eslint/js";
+import tseslint from "typescript-eslint";
 
-export default [
+export default tseslint.config(
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     languageOptions: {
       ecmaVersion: "latest",
@@ -28,11 +30,23 @@ export default [
       },
     },
     rules: {
+      "@typescript-eslint/no-explicit-any": "error",
+      "no-restricted-syntax": [
+        "error",
+        {
+          "selector": "CallExpression[callee.name='useEffect']",
+          "message": "Do not use useEffect. Prefer useSyncExternalStore or stable component prop-binding logic."
+        },
+        {
+          "selector": "CallExpression[callee.name='useRef']",
+          "message": "Direct dom manipulation via useRef is forbidden. Use pure React callbacks/props."
+        }
+      ],
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       "no-console": "off",
     },
   },
   {
-    ignores: ["dist/"],
-  },
-];
+    ignores: ["dist/", "node_modules/"],
+  }
+);
