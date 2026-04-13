@@ -2,7 +2,7 @@ import { PluginConfig, Lane } from "../core/lcu/types";
 
 export type { Lane };
 
-export const VERSION = "3.2.4";
+export const VERSION = "3.2.5";
 
 export const CONFIG_CHANGE_EVENT = "select-config-change";
 
