@@ -1,6 +1,6 @@
 {
   "name": "autochampselect",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "description": "Auto accept, pick, and ban plugin runtime for Pengu Loader",
   "license": "MIT",
   "type": "module",
