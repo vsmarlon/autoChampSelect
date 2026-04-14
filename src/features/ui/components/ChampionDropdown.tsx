@@ -40,67 +40,69 @@ export const ChampionDropdown: React.FC<ChampionDropdownProps> = ({
   return (
     <div className="select-champion-dropdown">
       <label className="select-champion-dropdown__label">{label}</label>
-      <div className="select-champion-dropdown__search-row">
-        <input
-          type="text"
-          className="select-champion-dropdown__search-input"
-          placeholder={placeholder}
-          value={inputValue}
-          onFocus={() => setIsOpen(true)}
-          onBlur={() => {
-            setIsOpen(false);
-            setSearch("");
-          }}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            setIsOpen(true);
-          }}
-          autoComplete="off"
-          spellCheck={false}
-        />
-        {(search || value !== 0) && (
-          <button
-            type="button"
-            className="select-champion-dropdown__clear"
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => {
-              onChange(0);
-              setSearch("");
+      <div className="select-champion-dropdown__input-anchor">
+        <div className="select-champion-dropdown__search-row">
+          <input
+            type="text"
+            className="select-champion-dropdown__search-input"
+            placeholder={placeholder}
+            value={inputValue}
+            onFocus={() => setIsOpen(true)}
+            onBlur={() => {
               setIsOpen(false);
+              setSearch("");
             }}
-          >
-            Clear
-          </button>
-        )}
-      </div>
-      {isOpen ? (
-        <div className="select-champion-dropdown__menu" role="listbox" aria-label={`${label} suggestions`}>
-          {!search ? (
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setIsOpen(true);
+            }}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          {(search || value !== 0) && (
             <button
               type="button"
-              className={`select-champion-dropdown__option ${value === 0 ? "select-champion-dropdown__option--active" : ""}`}
+              className="select-champion-dropdown__clear"
               onMouseDown={(event) => event.preventDefault()}
-              onClick={() => selectChampion(0)}
+              onClick={() => {
+                onChange(0);
+                setSearch("");
+                setIsOpen(false);
+              }}
             >
-              {placeholder}
+              Clear
             </button>
-          ) : null}
-          {filteredChampions.map((champion) => (
-            <button
-              type="button"
-              key={champion.id}
-              className={`select-champion-dropdown__option ${champion.id === value ? "select-champion-dropdown__option--active" : ""}`}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => selectChampion(champion.id)}
-            >
-              {champion.name}
-            </button>
-          ))}
-          {search && filteredChampions.length === 0 ? (
-            <div className="select-champion-dropdown__empty">No champions match.</div>
-          ) : null}
+          )}
         </div>
-      ) : null}
+        {isOpen ? (
+          <div className="select-champion-dropdown__menu" role="listbox" aria-label={`${label} suggestions`}>
+            {!search ? (
+              <button
+                type="button"
+                className={`select-champion-dropdown__option ${value === 0 ? "select-champion-dropdown__option--active" : ""}`}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => selectChampion(0)}
+              >
+                {placeholder}
+              </button>
+            ) : null}
+            {filteredChampions.map((champion) => (
+              <button
+                type="button"
+                key={champion.id}
+                className={`select-champion-dropdown__option ${champion.id === value ? "select-champion-dropdown__option--active" : ""}`}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => selectChampion(champion.id)}
+              >
+                {champion.name}
+              </button>
+            ))}
+            {search && filteredChampions.length === 0 ? (
+              <div className="select-champion-dropdown__empty">No champions match.</div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };
