@@ -1,11 +1,7 @@
 import React from "react";
-import { LANE_LABELS, LANE_SHORT_LABELS, Lane, LANES } from "../../../utils/constants";
-
-interface LaneTabsProps {
-  activeLane: Lane;
-  onLaneChange: (_lane: Lane) => void;
-  compact?: boolean;
-}
+import { LANE_LABELS, LANE_SHORT_LABELS, LANES } from "../../../utils/constants";
+import { LaneTabsProps } from "../../../utils/types";
+import { Lane } from "../../../core/lcu/types";
 
 export const LaneTabs: React.FC<LaneTabsProps> = ({ activeLane, onLaneChange, compact = false }) => {
   return (

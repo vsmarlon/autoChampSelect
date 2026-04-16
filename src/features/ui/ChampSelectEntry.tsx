@@ -1,10 +1,7 @@
 import React from "react";
+import { Props } from "../../utils/types";
 
-interface ChampSelectEntryProps {
-  onOpen: () => void;
-}
-
-export function ChampSelectEntry({ onOpen }: ChampSelectEntryProps): React.JSX.Element {
+export function ChampSelectEntry({ onOpen }: Props): React.JSX.Element {
   return (
     <button type="button" className="select-action-button" onClick={onOpen}>
       Auto Select

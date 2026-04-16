@@ -1,13 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { ConfigStore } from "@/core/ConfigStore";
-import { ChampionRepository } from "@/core/ChampionRepository";
-import { Logger } from "@/core/Logger";
-
-interface AppContextValue {
-  configStore: ConfigStore;
-  championRepository: ChampionRepository;
-  logger: Logger;
-}
+import { AppContextValue } from "../../utils/types";
 
 const AppContext = createContext<AppContextValue | null>(null);
 

@@ -1,13 +1,6 @@
 import React from "react";
-import { ChampionSummary } from "../../../core/lcu/types";
+import { PrioritySlotPairProps } from "../../../utils/types";
 import { ChampionDropdown } from "./ChampionDropdown";
-
-interface PrioritySlotPairProps {
-  type: "pick" | "ban";
-  champions: ChampionSummary[];
-  values: number[]; // [1stPick, 2ndPick]
-  onSlotChange: (_index: number, _id: number) => void;
-}
 
 export const PrioritySlotPair: React.FC<PrioritySlotPairProps> = ({ type, champions, values, onSlotChange }) => {
   const labelPrefix = type.charAt(0).toUpperCase() + type.slice(1);

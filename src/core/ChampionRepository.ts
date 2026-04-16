@@ -1,14 +1,8 @@
 import { ChampionSummary } from "./lcu/types";
 import { LcuClient } from "./LcuClient";
 import { Logger } from "./Logger";
-
-const EMPTY_CHAMPIONS: ChampionSummary[] = [];
-const OWNED_CHAMPION_RETRY_DELAYS_MS = [500, 1500] as const;
-const ALL_CHAMPION_RETRY_DELAYS_MS = [500] as const;
-
-function sortByName(champions: ChampionSummary[]): ChampionSummary[] {
-  return [...champions].sort((left, right) => left.name.localeCompare(right.name));
-}
+import { EMPTY_CHAMPIONS, OWNED_CHAMPION_RETRY_DELAYS_MS, ALL_CHAMPION_RETRY_DELAYS_MS } from "../utils/constants";
+import { sortByName } from "../utils/sorting";
 
 export class ChampionRepository {
   private lcuClient: LcuClient;

@@ -1,55 +1,26 @@
-import { CONFIG_CHANGE_EVENT, CONFIG_DEFAULTS, LANES } from "../utils/constants";
+import {
+  CONFIG_CHANGE_EVENT,
+  CONFIG_DEFAULTS,
+  LANES,
+  LEGACY_PREFIXES,
+  LEGACY_STORE_KEYS,
+  MAX_BAN_DELAY_SECONDS,
+  MAX_PICK_DELAY_SECONDS,
+  STORE_KEY,
+} from "../utils/constants";
+import {
+  cloneValue,
+  sanitizeBoolean,
+  sanitizeChampionList,
+  sanitizeDelaySeconds,
+  sanitizeLaneChampionMap,
+  valuesEqual,
+} from "../utils/validation";
 import { ConfigKey, Lane, PluginConfig } from "./lcu/types";
 import { Logger } from "./Logger";
 
-const STORE_KEY = "SelectAutoSelect";
-const LEGACY_STORE_KEYS = ["SelectAutoSelect"];
-const LEGACY_PREFIXES = ["select"];
-
 interface StoredConfig extends Partial<PluginConfig> {
   __migratedV1?: boolean;
-}
-
-function cloneValue<T>(value: T): T {
-  if (Array.isArray(value)) {
-    return [...value] as unknown as T;
-  }
-  if (value && typeof value === "object") {
-    return JSON.parse(JSON.stringify(value)) as T;
-  }
-  return value;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
-}
-
-function valuesEqual(left: unknown, right: unknown): boolean {
-  return JSON.stringify(left) === JSON.stringify(right);
-}
-
-function sanitizeBoolean(value: unknown, fallback: boolean): boolean {
-  return typeof value === "boolean" ? value : fallback;
-}
-
-function sanitizeChampionId(value: unknown, fallback = 0): number {
-  return typeof value === "number" && Number.isInteger(value) && value >= 0 ? value : fallback;
-}
-
-function sanitizeChampionList(value: unknown, fallback: number[]): number[] {
-  const source = Array.isArray(value) ? value : fallback;
-  return fallback.map((fallbackChampionId, index) => sanitizeChampionId(source[index], fallbackChampionId));
-}
-
-function sanitizeLaneChampionMap(value: unknown, fallback: Record<Lane, number[]>): Record<Lane, number[]> {
-  const source = isRecord(value) ? value : {};
-  return LANES.reduce(
-    (acc, lane) => {
-      acc[lane] = sanitizeChampionList(source[lane], fallback[lane]);
-      return acc;
-    },
-    {} as Record<Lane, number[]>,
-  );
 }
 
 export class ConfigStore {
@@ -133,6 +104,7 @@ export class ConfigStore {
   }
 
   getEffectiveChampions(type: "pick" | "ban", lane?: Lane): number[] {
+    const globalList = this.get(`${type}-champions` as ConfigKey) as number[];
     const isPick = type === "pick";
     const modeKey = isPick ? "lane-based-pick" : "lane-based-ban";
     const laneActive = this.get(modeKey as ConfigKey);
@@ -142,10 +114,11 @@ export class ConfigStore {
       const laneChampions = this.get(key) as Record<Lane, number[]>;
       const laneList = laneChampions[lane];
       if (laneList && laneList.some((id) => id !== 0)) {
-        return laneList;
+        return [...laneList, ...globalList].filter((id, index, list) => id !== 0 && list.indexOf(id) === index);
       }
     }
-    return this.get(`${type}-champions` as ConfigKey) as number[];
+
+    return globalList;
   }
 
   onChange(callback: (_detail: { key: string; value: unknown }) => void): () => void {
@@ -208,6 +181,18 @@ export class ConfigStore {
       case "force-pick":
       case "force-ban":
         return sanitizeBoolean(value, false) as PluginConfig[K];
+      case "pick-delay-seconds":
+        return sanitizeDelaySeconds(
+          value,
+          CONFIG_DEFAULTS["pick-delay-seconds"],
+          MAX_PICK_DELAY_SECONDS,
+        ) as PluginConfig[K];
+      case "ban-delay-seconds":
+        return sanitizeDelaySeconds(
+          value,
+          CONFIG_DEFAULTS["ban-delay-seconds"],
+          MAX_BAN_DELAY_SECONDS,
+        ) as PluginConfig[K];
       case "pick-champions":
         return sanitizeChampionList(value, CONFIG_DEFAULTS["pick-champions"]) as PluginConfig[K];
       case "ban-champions":

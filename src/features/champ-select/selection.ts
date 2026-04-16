@@ -75,6 +75,7 @@ export function getSessionSnapshot(session: LcuSession): SessionSnapshot {
       ]),
     ].filter((id): id is number => id > 0),
     teammateIntentChampionIds: session.myTeam
+      .filter((player) => player.cellId !== session.localPlayerCellId)
       .map((player) => player.championPickIntent)
       .filter((id): id is number => id > 0),
   };

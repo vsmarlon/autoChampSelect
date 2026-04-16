@@ -4,19 +4,12 @@ import { ConfigStore } from "../../core/ConfigStore";
 import { ChampionRepository } from "../../core/ChampionRepository";
 import { Logger } from "../../core/Logger";
 import { createScopedMount } from "../../utils/dom";
+import { HOME_PANEL_SELECTORS, CHAMP_SELECT_BUTTON_SELECTORS } from "../../utils/constants";
+import { UiRoot } from "../../utils/types";
 import { AppProvider } from "./AppContext";
 import { ChampSelectEntry } from "./ChampSelectEntry";
 import { HomePanel } from "./HomePanel";
 import { SettingsModal } from "./SettingsModal";
-
-const HOME_PANEL_SELECTORS = [".lol-social-roster", "lol-social-roster", ".social-roster"] as const;
-
-const CHAMP_SELECT_BUTTON_SELECTORS = [".bottom-right-buttons", ".bottom-right"] as const;
-
-interface UiRoot {
-  render(_node: React.ReactNode): void;
-  unmount(): void;
-}
 
 export class UiController {
   private configStore: ConfigStore;
@@ -36,7 +29,12 @@ export class UiController {
   private modalRoot: UiRoot | null = null;
   private modalMount: HTMLDivElement | null = null;
 
-  constructor(configStore: ConfigStore, championRepository: ChampionRepository, logger: Logger, stylesheetText: string) {
+  constructor(
+    configStore: ConfigStore,
+    championRepository: ChampionRepository,
+    logger: Logger,
+    stylesheetText: string,
+  ) {
     this.configStore = configStore;
     this.championRepository = championRepository;
     this.logger = logger;

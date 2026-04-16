@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useApp } from "./AppContext";
 import { useFullConfig } from "../../hooks/useConfig";
 import { SettingsContent } from "./SettingsContent";
-
-const HOME_PANEL_STATE_KEY = "SelectAutoSelect.ui.home-open";
+import { HOME_PANEL_STATE_KEY } from "../../utils/constants";
 
 export const HomePanel: React.FC = () => {
   const { configStore } = useApp();
@@ -30,7 +29,10 @@ export const HomePanel: React.FC = () => {
           <span className="select-home-panel__title">Auto Champion Select</span>
           <span className="select-home-panel__subtitle">Lobby control surface for ready, pick, and ban automation</span>
         </span>
-        <span className={`select-home-panel__chevron ${isOpen ? "select-home-panel__chevron--open" : ""}`} aria-hidden="true">
+        <span
+          className={`select-home-panel__chevron ${isOpen ? "select-home-panel__chevron--open" : ""}`}
+          aria-hidden="true"
+        >
           ^
         </span>
       </button>

@@ -21,8 +21,6 @@ export class AutoChampSelectApp {
   private socketObservers: PenguObserverHandle[] = [];
   private configCleanup: (() => void) | null = null;
   private currentPhase: string | null = null;
-  private homeRefreshInFlight = false;
-  private pendingHomeRefresh = false;
 
   constructor(stylesheetText: string) {
     this.logger = new Logger("select", true);
@@ -159,14 +157,12 @@ export class AutoChampSelectApp {
     if (nextPhase === "Lobby") {
       this.logger.log("Lobby: syncing champions");
       await this.championRepository.getPlayableChampions();
-      await this.refreshHomeDropdowns("phase-lobby");
       return;
     }
 
     if (nextPhase === "ChampSelect") {
       this.champSelectController.clearSession();
       await this.bootstrapChampSelectSession();
-      await this.refreshHomeDropdowns("phase-champ-select");
       return;
     }
   }
@@ -187,24 +183,6 @@ export class AutoChampSelectApp {
 
     if (event.data?.state === "InProgress" && event.data?.playerResponse === "None") {
       this.readyCheckController.handleReadyCheck();
-    }
-  }
-
-  async refreshHomeDropdowns(reason: string): Promise<void> {
-    this.pendingHomeRefresh = true;
-    if (this.homeRefreshInFlight) {
-      return;
-    }
-
-    this.homeRefreshInFlight = true;
-    try {
-      while (this.pendingHomeRefresh) {
-        this.pendingHomeRefresh = false;
-        this.logger.log("refreshHomeDropdowns reason", reason);
-        // React UI handles this reactive now, but we keep the method for consistency
-      }
-    } finally {
-      this.homeRefreshInFlight = false;
     }
   }
 

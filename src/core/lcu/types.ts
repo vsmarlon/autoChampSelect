@@ -75,6 +75,8 @@ export interface PluginConfig {
   "auto-accept": boolean;
   "auto-pick": boolean;
   "auto-ban": boolean;
+  "pick-delay-seconds": number;
+  "ban-delay-seconds": number;
   "pick-champions": number[];
   "ban-champions": number[];
   "lane-based-pick": boolean;

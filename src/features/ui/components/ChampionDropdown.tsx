@@ -1,13 +1,5 @@
 import React, { useDeferredValue, useMemo, useState } from "react";
-import { ChampionSummary } from "../../../core/lcu/types";
-
-interface ChampionDropdownProps {
-  label: string;
-  value: number;
-  champions: ChampionSummary[];
-  onChange: (_id: number) => void;
-  placeholder?: string;
-}
+import { ChampionDropdownProps } from "../../../utils/types";
 
 export const ChampionDropdown: React.FC<ChampionDropdownProps> = ({
   label,
@@ -19,7 +11,10 @@ export const ChampionDropdown: React.FC<ChampionDropdownProps> = ({
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const deferredSearch = useDeferredValue(search);
-  const selectedChampion = useMemo(() => champions.find((champion) => champion.id === value) ?? null, [champions, value]);
+  const selectedChampion = useMemo(
+    () => champions.find((champion) => champion.id === value) ?? null,
+    [champions, value],
+  );
 
   const filteredChampions = useMemo(() => {
     const normalizedSearch = deferredSearch.trim().toLowerCase();

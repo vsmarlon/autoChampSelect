@@ -1,6 +1,4 @@
-const LABEL_STYLE = "background: #7b1fa2; color: #fff; font-weight: bold; padding: 1px 6px; border-radius: 3px;";
-const SCOPE_STYLE = "background: #333; color: #fff; font-weight: bold; padding: 1px 6px; border-radius: 3px;";
-const RESET_STYLE = "color: inherit;";
+import { LABEL_STYLE, RESET_STYLE, SCOPE_STYLE } from "../utils/constants";
 
 export class Logger {
   public scope: string;
